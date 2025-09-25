@@ -3,6 +3,8 @@
 -- This is the entry point of your config.
 -- ---------------------------------------
 
+vim.g.default_colorscheme = "bluloco"
+
 local function load_source(source)
   local status_ok, error = pcall(require, source)
   if not status_ok then

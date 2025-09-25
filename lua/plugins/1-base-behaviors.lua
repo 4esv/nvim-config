@@ -703,4 +703,17 @@ return {
     }
   },
 
+  -- todo-comments.nvim [highlight and search TODO comments]
+  -- https://github.com/folke/todo-comments.nvim
+  {
+    "folke/todo-comments.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    event = "User BaseFile",
+    opts = {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+    },
+  },
+
 } -- end of return

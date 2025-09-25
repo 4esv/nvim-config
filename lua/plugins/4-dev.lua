@@ -28,6 +28,9 @@
 --       -> compiler.nvim                  [compiler]
 --       -> overseer.nvim                  [task runner]
 
+--       ## CODE RUNNER
+--       -> sniprun                        [code runner]
+
 --       ## DEBUGGER
 --       -> nvim-dap                       [debugger]
 
@@ -418,6 +421,22 @@ return {
       --     { "on_complete_dispose", timeout=300 }, -- dispose old tasks.
       --   },
       -- },
+    },
+  },
+
+  --  CODE RUNNER -------------------------------------------------------------
+  --  sniprun [code runner]
+  --  https://github.com/michaelb/sniprun
+  --  Run code snippets in your editor.
+  {
+    "michaelb/sniprun",
+    branch = "master",
+    cmd = { "SnipRun" },
+    build = "sh ./install.sh",
+    opts = {
+      display_options = {
+        border = "rounded",
+      },
     },
   },
 

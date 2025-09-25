@@ -69,6 +69,15 @@ return {
      opts = {}
    },
 
+  --  bluloco [theme]
+  --  https://github.com/uloco/bluloco.nvim
+  {
+    "uloco/bluloco.nvim",
+    dependencies = { "rktjmp/lush.nvim" },
+    event = "User LoadColorSchemes",
+    opts = {}
+  },
+
   --  alpha-nvim [greeter]
   --  https://github.com/goolord/alpha-nvim
   {
