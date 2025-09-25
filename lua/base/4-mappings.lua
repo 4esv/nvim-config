@@ -915,6 +915,10 @@ if is_available("telescope.nvim") then
     end,
     desc = "Find themes",
   }
+  maps.n["<leader>fT"] = {
+    "<cmd>TodoTelescope<cr>",
+    desc = get_icon("Todo") .. " Find todos",
+  }
   maps.n["<leader>ff"] = {
     function()
       require("telescope.builtin").live_grep({
@@ -1008,6 +1012,8 @@ if is_available("telescope.nvim") then
       desc = "Find in undo tree",
     }
   end
+
+
 
   -- extra - compiler
   if is_available("compiler.nvim") and is_available("overseer.nvim") then

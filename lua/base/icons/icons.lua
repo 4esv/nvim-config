@@ -37,6 +37,7 @@ return {
   Docs = "",
   Git = "󰊢",
   LSP = "",
+  Todo = "",
 
   -- Heirline-components - tabline
   BufferClose = "󰅖",
