@@ -15,12 +15,9 @@
 --       -> litee-calltree.nvim            [calltree]
 
 --       ## CODE DOCUMENTATION
---       -> dooku.nvim                     [html doc generator]
 --       -> markdown-preview.nvim          [markdown previewer]
---       -> markmap.nvim                   [markdown mindmap]
 
 --       ## ARTIFICIAL INTELLIGENCE
---       -> neural                         [chatgpt code generator]
 --       -> copilot                        [github code suggestions]
 --       -> guess-indent                   [guess-indent]
 
@@ -270,18 +267,6 @@ return {
   },
 
   --  CODE DOCUMENTATION ------------------------------------------------------
-  --  dooku.nvim [html doc generator]
-  --  https://github.com/zeioth/dooku.nvim
-  {
-    "zeioth/dooku.nvim",
-    cmd = {
-      "DookuGenerate",
-      "DookuOpen",
-      "DookuAutoSetup"
-    },
-    opts = {},
-  },
-
   --  [markdown previewer]
   --  https://github.com/iamcco/markdown-preview.nvim
   --  Note: If you change the build command, wipe ~/.local/data/nvim/lazy
@@ -307,40 +292,7 @@ return {
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
   },
 
-  --  [markdown markmap]
-  --  https://github.com/zeioth/markmap.nvim
-  --  Important: Make sure you have yarn in your PATH before running markmap.
-  {
-    "zeioth/markmap.nvim",
-    build = "yarn global add markmap-cli",
-    cmd = { "MarkmapOpen", "MarkmapSave", "MarkmapWatch", "MarkmapWatchStop" },
-    config = function(_, opts) require("markmap").setup(opts) end,
-  },
-
   --  ARTIFICIAL INTELLIGENCE  -------------------------------------------------
-  --  neural [chatgpt code generator]
-  --  https://github.com/dense-analysis/neural
-  --
-  --  NOTE: This plugin is disabled by default.
-  --        To enable it set the next env var in your OS:
-  --        OPENAI_API_KEY="my_key_here"
-  {
-    "dense-analysis/neural",
-    cmd = { "Neural" },
-    config = function()
-      require("neural").setup {
-        source = {
-          openai = {
-            api_key = vim.env.OPENAI_API_KEY,
-          },
-        },
-        ui = {
-          prompt_icon = require("base.utils").get_icon("PromptPrefix"),
-        },
-      }
-    end,
-  },
-
   --  copilot [github code suggestions]
   --  https://github.com/zbirenbaum/copilot.lua
   --  Write to get AI suggestion for your code on the fly.

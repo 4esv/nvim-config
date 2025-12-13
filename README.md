@@ -2,14 +2,6 @@
 
 My personal Neovim configuration, forked from [NormalNvim](https://github.com/NormalNvim/NormalNvim).
 
-## Why Fork?
-
-NormalNvim is a solid base, but I needed:
-- Different defaults (autoformat/autopairs off, specific colorscheme)
-- Additional plugins for my workflow (testing, markdown, AI)
-- Extensive keybinding customizations
-- Platform-specific handling (Android/Termux support)
-
 ## What's Different
 
 ### Theme
@@ -22,11 +14,8 @@ NormalNvim is a solid base, but I needed:
 | `render-markdown.nvim` | Render markdown in normal mode |
 | `checkmate.nvim` | Toggle markdown checkboxes |
 | `nvim-highlight-colors` | Visualize hex colors inline |
-| `neural` | ChatGPT code generation (optional) |
-| `markmap.nvim` | Markdown mind maps |
 | `neotest` | Testing framework (10+ language adapters) |
 | `nvim-coverage` | Code coverage visualization |
-| `dooku.nvim` | HTML documentation generator |
 
 ### Keybinding Highlights
 
@@ -45,9 +34,9 @@ Plus ~1600 lines of custom mappings for LSP, DAP, Telescope, testing, etc.
 ### Default Toggles Changed
 
 ```lua
-vim.g.autopairs_enabled = false    -- I prefer manual pairing
-vim.g.autoformat_enabled = false   -- Format on demand, not save
-vim.g.inlay_hints_enabled = false  -- Less visual noise
+vim.g.autopairs_enabled = false
+vim.g.autoformat_enabled = false
+vim.g.inlay_hints_enabled = false
 ```
 
 ### LSP & Formatting
