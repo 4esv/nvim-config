@@ -9,7 +9,6 @@
 --       -> nvim-highlight-colors          [hex colors]
 
 --       ## LSP
---       -> nvim-java                      [java support]
 --       -> nvim-lspconfig                 [lsp default configs]
 --       -> mason-lspconfig                [auto start lsp clients]
 --       -> mason.nvim                     [lsp package manager]
@@ -191,49 +190,6 @@ return {
 
   --  LSP -------------------------------------------------------------------
 
-  -- nvim-java [java support]
-  -- https://github.com/nvim-java/nvim-java
-  -- Reliable jdtls support. Must go before lsp-config and mason-lspconfig.
-  {
-    "nvim-java/nvim-java",
-    ft = { "java" },
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "neovim/nvim-lspconfig",
-      "mfussenegger/nvim-dap",
-      "mason-org/mason.nvim",
-    },
-    opts = {
-      notifications = {
-        dap = false,
-      },
-      -- NOTE: One of these files must be in your project root directory.
-      --       Otherwise the debugger will end in the wrong directory and fail.
-      root_markers = {
-        'settings.gradle',
-        'settings.gradle.kts',
-        'pom.xml',
-        'build.gradle',
-        'mvnw',
-        'gradlew',
-        'build.gradle',
-        'build.gradle.kts',
-        '.git',
-      },
-    },
-    config = function(_, opts)
-      require("java").setup(opts)               -- Setup.
-      vim.api.nvim_create_autocmd("FileType", { -- Enable for java files.
-        desc = "Load this plugin for java files.",
-        callback = function()
-          local lspconf = utils.get_plugin_opts("nvim-lspconfig")
-          local is_java = vim.bo.filetype == "java"
-          if lspconf and is_java then require("lspconfig").jdtls.setup({}) end
-        end,
-      })
-    end
-  },
-
   --  nvim-lspconfig [lsp default configs]
   --  https://github.com/neovim/nvim-lspconfig
   --  This plugin is just a dependency for other plugins.
@@ -241,7 +197,6 @@ return {
   {
     "neovim/nvim-lspconfig",
     event = "User BaseFile",
-    dependencies = "nvim-java/nvim-java",
   },
 
   -- mason-lspconfig [auto start lsp clients]
@@ -286,7 +241,6 @@ return {
     },
     opts = {
       registries = {
-        "github:nvim-java/mason-registry",
         "github:mason-org/mason-registry",
       },
       ui = {
@@ -432,7 +386,6 @@ return {
         { path = "nvim-treesitter-textobjects", mods = { "nvim-treesitter", "nvim-treesitter-textobjects" } },
         { path = "markdown.nvim", mods = { "render-markdown" } },
         { path = "nvim-highlight-colors", mods = { "nvim-highlight-colors" } },
-        { path = "nvim-java", mods = { "java" } },
         { path = "nvim-lspconfig", mods = { "lspconfig" } },
         { path = "mason-lspconfig.nvim", mods = { "mason-lspconfig" } },
         { path = "mason.nvim", mods = { "mason", "mason-core", "mason-registry", "mason-vendor" } },
@@ -473,7 +426,6 @@ return {
         { path = "neotest-dotnet", mods = { "neotest-dotnet" } },
         { path = "neotest-elixir", mods = { "neotest-elixir" } },
         { path = "neotest-golang", mods = { "neotest-golang" } },
-        { path = "neotest-java", mods = { "neotest-java" } },
         { path = "neotest-jest", mods = { "neotest-jest" } },
         { path = "neotest-phpunit", mods = { "neotest-phpunit" } },
         { path = "neotest-python", mods = { "neotest-python" } },
