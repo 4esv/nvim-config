@@ -1331,6 +1331,19 @@ if is_available("hop.nvim") then
   }
 end
 
+-- cellular-automaton.nvim [fun animations] --------------------------------
+if is_available("cellular-automaton.nvim") then
+  maps.n["<leader><leader>"] = {
+    function()
+      local ok, err = pcall(vim.cmd, "CellularAutomaton game_of_life")
+      if not ok then
+        vim.notify("Game of life requires treesitter parser for this filetype", vim.log.levels.WARN)
+      end
+    end,
+    desc = "Game of life",
+  }
+end
+
 -- mason-lspconfig.nvim [lsp] -------------------------------------------------
 -- WARNING: Don't delete this section, or you won't have LSP keymappings.
 

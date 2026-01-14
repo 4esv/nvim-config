@@ -556,6 +556,13 @@ return {
     opts = { keys = "etovxqpdygfblzhckisuran" }
   },
 
+  --  cellular-automaton.nvim [fun animations]
+  --  https://github.com/Eandrju/cellular-automaton.nvim
+  {
+    "Eandrju/cellular-automaton.nvim",
+    cmd = "CellularAutomaton",
+  },
+
   --  nvim-autopairs [auto close brackets]
   --  https://github.com/windwp/nvim-autopairs
   --  It's disabled by default, you can enable it with <space>ua
