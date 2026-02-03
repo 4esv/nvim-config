@@ -296,6 +296,50 @@ return {
   },
 
   --  ARTIFICIAL INTELLIGENCE  -------------------------------------------------
+  --  99 [local LLM code completion]
+  --  https://github.com/ThePrimeagen/99
+  {
+    "ThePrimeagen/99",
+    event = "VeryLazy",
+    config = function()
+      local _99 = require("99")
+      local OllamaProvider = require("custom.ollama-provider")
+      _99.setup({
+        model = "mistralai/codestral-2508",
+        provider = OllamaProvider,
+        logger = {
+          level = _99.DEBUG,
+          path = "/tmp/99.log",
+          print_errors = true,
+        },
+        display_errors = true,
+        completion = {
+          source = "cmp",
+        },
+        md_files = { "AGENT.md" },
+      })
+      -- Register which-key group
+      local wk_avail, wk = pcall(require, "which-key")
+      if wk_avail then
+        wk.add({ { "<leader>9", group = "99" } })
+      end
+      -- Fill
+      vim.keymap.set("n", "<leader>9f", function() _99.fill_in_function_prompt() end, { desc = "99: Fill function (prompt)" })
+      vim.keymap.set("n", "<leader>9F", function() _99.fill_in_function() end, { desc = "99: Fill function (direct)" })
+      vim.keymap.set("v", "<leader>9v", function() _99.visual_prompt() end, { desc = "99: Fill visual (prompt)" })
+      vim.keymap.set("v", "<leader>9V", function() _99.visual() end, { desc = "99: Fill visual (direct)" })
+      -- Control
+      vim.keymap.set("n", "<leader>9s", function() _99.stop_all_requests() end, { desc = "99: Stop all requests" })
+      vim.keymap.set("n", "<leader>9i", function() _99.info() end, { desc = "99: Info" })
+      -- Logs
+      vim.keymap.set("n", "<leader>9l", function() _99.view_logs() end, { desc = "99: View logs" })
+      vim.keymap.set("n", "<leader>9[", function() _99.prev_request_logs() end, { desc = "99: Prev request logs" })
+      vim.keymap.set("n", "<leader>9]", function() _99.next_request_logs() end, { desc = "99: Next request logs" })
+      vim.keymap.set("n", "<leader>9q", function() _99.previous_requests_to_qfix() end, { desc = "99: Requests to quickfix" })
+      vim.keymap.set("n", "<leader>9c", function() _99.clear_previous_requests() end, { desc = "99: Clear request history" })
+    end,
+  },
+
   --  copilot [github code suggestions]
   --  https://github.com/zbirenbaum/copilot.lua
   --  Write to get AI suggestion for your code on the fly.

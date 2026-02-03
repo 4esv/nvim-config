@@ -545,6 +545,14 @@ return {
     config = function()
       vim.g.matchup_matchparen_deferred = 1   -- work async
       vim.g.matchup_matchparen_offscreen = {} -- disable status bar icon
+      vim.g.matchup_matchparen_enabled = 1
+      -- Disable for haskell (broken treesitter queries)
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "haskell",
+        callback = function()
+          vim.b.matchup_matchparen_enabled = 0
+        end,
+      })
     end,
   },
 
