@@ -300,7 +300,6 @@ return {
   --  https://github.com/ThePrimeagen/99
   {
     "4esv/99",
-    branch = "dev",
     event = "VeryLazy",
     config = function()
       local _99 = require("99")
