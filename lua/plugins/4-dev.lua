@@ -303,10 +303,8 @@ return {
     event = "VeryLazy",
     config = function()
       local _99 = require("99")
-      local OllamaProvider = require("custom.ollama-provider")
       _99.setup({
         model = "mistralai/codestral-2508",
-        provider = OllamaProvider,
         logger = {
           level = _99.DEBUG,
           path = "/tmp/99.log",
