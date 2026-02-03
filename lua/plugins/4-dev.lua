@@ -299,12 +299,13 @@ return {
   --  99 [local LLM code completion]
   --  https://github.com/ThePrimeagen/99
   {
-    "ThePrimeagen/99",
+    "4esv/99",
+    branch = "dev",
     event = "VeryLazy",
     config = function()
       local _99 = require("99")
       _99.setup({
-        model = "mistralai/codestral-2508",
+        model = "openrouter/mistralai/codestral-2508",
         logger = {
           level = _99.DEBUG,
           path = "/tmp/99.log",
