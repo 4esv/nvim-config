@@ -304,7 +304,7 @@ return {
     config = function()
       local _99 = require("99")
       _99.setup({
-        model = "openrouter/mistralai/codestral-2508",
+        model = "openrouter/qwen/qwen3-coder",
         logger = {
           level = _99.DEBUG,
           path = "/tmp/99.log",
@@ -321,11 +321,19 @@ return {
       if wk_avail then
         wk.add({ { "<leader>9", group = "99" } })
       end
-      -- Fill
-      vim.keymap.set("n", "<leader>9f", function() _99.fill_in_function_prompt() end, { desc = "99: Fill function (prompt)" })
-      vim.keymap.set("n", "<leader>9F", function() _99.fill_in_function() end, { desc = "99: Fill function (direct)" })
-      vim.keymap.set("v", "<leader>9v", function() _99.visual_prompt() end, { desc = "99: Fill visual (prompt)" })
-      vim.keymap.set("v", "<leader>9V", function() _99.visual() end, { desc = "99: Fill visual (direct)" })
+      -- Smart fill: detects visual vs normal mode
+      local function smart_fill(with_prompt)
+        return function()
+          local mode = vim.fn.mode()
+          if mode == 'v' or mode == 'V' or mode == '\22' then
+            if with_prompt then _99.visual_prompt() else _99.visual() end
+          else
+            if with_prompt then _99.fill_in_function_prompt() else _99.fill_in_function() end
+          end
+        end
+      end
+      vim.keymap.set({"n", "v"}, "<leader>9<CR>", smart_fill(true), { desc = "99: Fill (prompt)" })
+      vim.keymap.set({"n", "v"}, "<leader>9<leader>", smart_fill(false), { desc = "99: Fill (direct)" })
       -- Control
       vim.keymap.set("n", "<leader>9s", function() _99.stop_all_requests() end, { desc = "99: Stop all requests" })
       vim.keymap.set("n", "<leader>9i", function() _99.info() end, { desc = "99: Info" })
