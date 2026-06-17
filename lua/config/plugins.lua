@@ -226,7 +226,7 @@ starter.setup({
     starter.gen_hook.adding_bullet(),
     starter.gen_hook.aligning("center", "center"),
   },
-  footer = "use what exists · automate what repeats · document what breaks",
+  footer = "vade, vide, vince.",
 })
 
 -- Treesitter (main branch) ----------------------------------------------------
