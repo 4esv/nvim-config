@@ -924,4 +924,23 @@ return {
     end,
   },
 
+  -- BQN SUPPORT ---------------------------------------------------------------
+  -- BQN [BQN filetype + glyph input]
+  -- https://github.com/mlochbaum/BQN
+  -- Official vim support: filetype detection, syntax, and BQN keymap
+  -- for typing glyphs with \ prefix (e.g. \t -> ⊢).
+  {
+    "mlochbaum/BQN",
+    ft = "bqn",
+  },
+
+  -- nvim-bqn [BQN REPL integration]
+  -- https://github.com/calebowens/nvim-bqn
+  -- Evaluate BQN code inline with virtual text results.
+  -- <CR> evals start-of-file to cursor, plus full file eval, clear, explain.
+  {
+    "calebowens/nvim-bqn",
+    ft = "bqn",
+  },
+
 } -- end of return

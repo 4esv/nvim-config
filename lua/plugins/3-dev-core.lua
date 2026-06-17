@@ -125,6 +125,17 @@ return {
       },
     },
     config = function(_, opts)
+      -- Register tree-sitter-bqn custom parser.
+      local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+      parser_config.bqn = {
+        install_info = {
+          url = "https://github.com/shnarazk/tree-sitter-bqn",
+          files = { "src/parser.c" },
+          branch = "main",
+        },
+        filetype = "bqn",
+      }
+
       -- calling setup() here is necessary to enable conceal and some features.
       require("nvim-treesitter.configs").setup(opts)
     end,

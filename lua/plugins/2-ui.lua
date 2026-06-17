@@ -78,6 +78,16 @@ return {
     opts = {}
   },
 
+  --  mono [theme]
+  --  https://github.com/psynyde/mono
+  {
+    "psynyde/mono",
+    event = "User LoadColorSchemes",
+    opts = {
+      italics = true,
+    },
+  },
+
   --  alpha-nvim [greeter]
   --  https://github.com/goolord/alpha-nvim
   {

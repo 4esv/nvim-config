@@ -83,6 +83,7 @@ local icons = {
   g = { desc = get_icon("Git", true) .. " Git" },
   S = { desc = get_icon("Session", true) .. " Session" },
   t = { desc = get_icon("Terminal", true) .. " Terminal" },
+  bq = { desc = "⊢ BQN" },
 }
 
 -- standard Operations -----------------------------------------------------
@@ -1073,6 +1074,40 @@ maps.t["<C-k>"] =
 { "<cmd>wincmd k<cr>", desc = "Terminal up window navigation" }
 maps.t["<C-l>"] =
 { "<cmd>wincmd l<cr>", desc = "Terminal right window navigation" }
+
+-- BQN [array language] ----------------------------------------------------
+-- Inline eval mappings (<leader>Br/Bf/Be/Bc/BC) are in after/ftplugin/bqn.lua
+-- since they require nvim-bqn which only loads for BQN buffers.
+if vim.fn.executable("bqn") == 1 then
+  maps.n["<leader>B"] = icons.bq
+  maps.n["<leader>Bi"] = {
+    "<cmd>TermExec cmd='bqn' direction=float<cr>",
+    desc = "Open BQN REPL",
+  }
+  maps.n["<leader>Bt"] = {
+    function()
+      vim.cmd("write")
+      require("toggleterm").exec(
+        "bqn " .. vim.fn.expand("%:p"), 1, 0, nil, "float"
+      )
+    end,
+    desc = "Run file in terminal",
+  }
+  maps.n["<leader>Bk"] = {
+    function()
+      if vim.bo.keymap == "bqn" then
+        vim.bo.keymap = ""
+        vim.bo.iminsert = 0
+        vim.notify("BQN keymap OFF", vim.log.levels.INFO)
+      else
+        vim.bo.keymap = "bqn"
+        vim.bo.iminsert = 1
+        vim.notify("BQN keymap ON", vim.log.levels.INFO)
+      end
+    end,
+    desc = "Toggle BQN keymap",
+  }
+end
 
 -- dap.nvim [debugger] -----------------------------------------------------
 -- Depending your terminal some F keys may not work. To fix it:
