@@ -224,7 +224,9 @@ end
 if vim.fn.executable("yazi") == 1 then
   map("n", "<leader>r", "<cmd>Yazi<cr>", { desc = "File browser (yazi)" })
 end
-map("n", "<leader>e", "<cmd>Neotree toggle<cr>", { desc = "Neotree" })
+-- reveal_force_cwd silently re-roots when the file is outside cwd, instead of
+-- the annoying "File not in cwd. Change cwd?" confirm prompt on every open.
+map("n", "<leader>e", "<cmd>Neotree toggle reveal_force_cwd<cr>", { desc = "File tree" })
 map("n", "<leader>i", function() require("aerial").toggle() end, { desc = "Aerial outline" })
 
 -- Session manager  [<leader>S]
