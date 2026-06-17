@@ -407,4 +407,14 @@ vim.schedule(function()
   -- Scrollbar (+ gitsigns integration)
   require("scrollbar").setup({ excluded_filetypes = { "neo-tree", "alpha", "starter" } })
   pcall(function() require("scrollbar.handlers.gitsigns").setup() end)
+
+  -- Session manager: manual load via <leader>S… only (no surprise autoload,
+  -- which previously restored stale buffers/neo-tree state after a config swap).
+  do
+    local ok, sm = pcall(require, "session_manager")
+    if ok then
+      local Mode = require("session_manager.config").AutoloadMode
+      sm.setup({ autoload_mode = Mode.Disabled, autosave_last_session = true })
+    end
+  end
 end)
