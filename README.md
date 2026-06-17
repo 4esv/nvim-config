@@ -1,74 +1,66 @@
 # nvim-config
 
-My personal Neovim configuration, forked from [NormalNvim](https://github.com/NormalNvim/NormalNvim).
+Personal Neovim config — **Neovim 0.12+**, built on the native **`vim.pack`**
+plugin manager (no lazy.nvim). Slimmed from a NormalNvim fork: ~122 plugins → ~60,
+with the same daily keybindings and workflow.
 
-## What's Different
+> Requires Neovim **0.12+** (for `vim.pack`). On older Neovim it won't start.
 
-### Theme
-- **Colorscheme**: `eldritch` instead of Tokyo Night
-
-### Additional Plugins
-
-| Plugin | Purpose |
-|--------|---------|
-| `render-markdown.nvim` | Render markdown in normal mode |
-| `checkmate.nvim` | Toggle markdown checkboxes |
-| `nvim-highlight-colors` | Visualize hex colors inline |
-| `neotest` | Testing framework (10+ language adapters) |
-| `nvim-coverage` | Code coverage visualization |
-
-### Keybinding Highlights
+## Layout
 
 ```
-<leader>w     Save file
-<leader>W     Save as sudo
-<leader>q     Quit with confirmation
-|             Vertical split
-\             Horizontal split
-<C-y/d/p>     Clipboard operations
-x/X           Delete without yanking
+init.lua            entry: leader, built-in disables, module load order
+lua/config/
+  options.lua       vim.opt + toggle globals + filetypes
+  plugins.lua       vim.pack.add (all plugins) + setups + deferred block
+  lsp.lua           mason install + native vim.lsp.enable + conform + nvim-lint
+  debug.lua         nvim-dap + dap-ui (deferred)
+  test.lua          neotest + coverage (deferred)
+  keymaps.lua       all keybindings (LSP maps live in lsp.lua on LspAttach)
+  autocmds.lua      autocmds + user commands
+  ui.lua            <leader>u… toggle helpers
+after/ftplugin/bqn.lua   BQN buffer setup + inline-eval maps
+ftdetect/bqn.lua         .bqn filetype
 ```
 
-Plus ~1600 lines of custom mappings for LSP, DAP, Telescope, testing, etc.
+## Stack
 
-### Default Toggles Changed
+- **Plugins:** `vim.pack` — `:PackUpdate` to update, `:PackStatus` to inspect.
+- **Completion:** blink.cmp (Enter accepts, Tab/S-Tab navigate, C-space toggles).
+- **UI:** mini.statusline + mini.tabline + mini.starter; mini.icons/pairs/
+  indentscope/animate. Theme: **eldritch** (swap live with `<leader>ft`; `mono`
+  is bundled but monochrome by design).
+- **LSP:** native `vim.lsp.enable`, servers installed via Mason on first launch
+  (basedpyright, ruff, lua_ls, ts_ls, html/css/json/yaml/bash).
+- **Format/lint:** conform.nvim (`<leader>lf`, autoformat toggle `<leader>uf/uF`)
+  + nvim-lint (shellcheck, yamllint).
+- **Finder:** telescope (+fzf-native, undo, neoclip). **Git:** gitsigns + fugitive.
+- **Languages tooled:** Python, Lua, JS/TS + web, shell, YAML, BQN. DAP + neotest
+  trimmed to those.
 
-```lua
-vim.g.autopairs_enabled = false
-vim.g.autoformat_enabled = false
-vim.g.inlay_hints_enabled = false
-```
+## Performance
 
-### LSP & Formatting
+Startup ~95ms warm. Everything not needed for the first paint (telescope
+extensions, ufo, dap, neotest, mason install, eye-candy) runs in a `vim.schedule`
+block that fires the instant Neovim goes idle — before any input lands.
 
-Custom null-ls sources configured:
-- **Diagnostics**: cpplint, eslint, flake8, luacheck, yamllint
-- **Formatting**: autopep8, beautysh, eslint, jq, rustfmt, shfmt (2-space indent)
+## Keymaps
 
-## Installation
-
-Part of my [dotfiles](https://github.com/4esv/dotfiles):
-
-```bash
-git clone --recurse-submodules https://github.com/4esv/dotfiles.git ~/dotfiles
-~/dotfiles/bin/.local/bin/dots install
-```
-
-Or standalone:
-
-```bash
-git clone https://github.com/4esv/nvim-config.git ~/.config/nvim
-```
+`<space>` leader, `,` localleader. Press `<space>` and wait for the full
+which-key menu (every mapping is labeled). Groups: `f` find · `g` git · `l` lsp ·
+`u` ui toggles · `b` buffers · `d` debug · `T` test · `D` docs · `S` session ·
+`t` terminal · `p` packages · `B` BQN.
 
 ## Requirements
 
-- Neovim 0.11+
+- Neovim 0.12+
 - [Nerd Font](https://www.nerdfonts.com/)
-- Node.js, ripgrep, fd
+- Node.js, ripgrep, fd, a C compiler (treesitter), and optionally yazi/lazygit
 
-## Upstream
+## History
 
-Based on [NormalNvim](https://github.com/NormalNvim/NormalNvim) - see their [wiki](https://github.com/NormalNvim/NormalNvim/wiki) for base documentation.
+`main` holds the previous lazy.nvim / NormalNvim-fork config (0.11). This branch
+(`vim-pack`) is the 0.12 native-pack rewrite.
 
 ## License
 

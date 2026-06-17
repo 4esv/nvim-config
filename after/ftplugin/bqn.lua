@@ -1,8 +1,9 @@
--- BQN buffer-local settings
+-- BQN buffer-local settings (ported; rtp path repointed to vim.pack).
 
--- Ensure BQN vim support (keymap, syntax) is on the rtp
-local bqn_vim_dir = vim.fn.stdpath("data") .. "/lazy/BQN/editors/vim"
-if vim.fn.isdirectory(bqn_vim_dir) == 1 then
+-- Ensure BQN vim support (keymap, syntax) is on the rtp.
+local hits = vim.fn.globpath(vim.fn.stdpath("data") .. "/site/pack", "*/opt/BQN/editors/vim", false, true)
+local bqn_vim_dir = hits[1]
+if bqn_vim_dir and vim.fn.isdirectory(bqn_vim_dir) == 1 then
   if not vim.tbl_contains(vim.opt.rtp:get(), bqn_vim_dir) then
     vim.opt.rtp:append(bqn_vim_dir)
   end
@@ -24,8 +25,7 @@ vim.bo.commentstring = "#%s"
 -- Match BQN angle brackets
 vim.opt_local.matchpairs:append("⟨:⟩")
 
--- Remap nvim-bqn functions under <leader>B to avoid conflicts with
--- existing <leader>bc/bC (buffer close) and <CR> mappings.
+-- Remap nvim-bqn functions under <leader>B (avoid clashing with buffer/CR maps).
 local ok, bqn = pcall(require, "bqn")
 if not ok then
   vim.notify("nvim-bqn not loaded: " .. tostring(bqn), vim.log.levels.WARN)
@@ -35,7 +35,6 @@ end
 local map = vim.keymap.set
 local bo = { buffer = true }
 
--- Inline eval (virtual text results)
 map("n", "<leader>Br", function() bqn.evalBQN(0, vim.fn.line("."), false) end,
   vim.tbl_extend("force", bo, { desc = "BQN eval to cursor (inline)" }))
 map("x", "<leader>Br", ":BQNEvalRange<CR>",
@@ -49,7 +48,7 @@ map("n", "<leader>Bc", function() bqn.clearBQN(vim.fn.line(".") - 1, -1) end,
 map("n", "<leader>BC", "<cmd>BQNClearFile<cr>",
   vim.tbl_extend("force", bo, { desc = "BQN clear all results" }))
 
--- Remove nvim-bqn's default mappings that conflict
+-- Remove nvim-bqn's default mappings that conflict.
 pcall(vim.keymap.del, "n", "<CR>", { buffer = true })
 pcall(vim.keymap.del, "x", "<CR>", { buffer = true })
 pcall(vim.keymap.del, "n", "<leader>bf", { buffer = true })

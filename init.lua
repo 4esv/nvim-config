@@ -1,50 +1,41 @@
--- HELLO, welcome to NormalNvim!
--- ---------------------------------------
--- This is the entry point of your config.
--- ---------------------------------------
+-- ===========================================================================
+-- Neovim 0.12 + vim.pack trial config.
+-- Slimmed port of Axel's NormalNvim fork (~122 plugins -> ~60), lazy.nvim
+-- replaced by the native vim.pack manager.
+--
+-- Load order matters: leader before plugins/keymaps; plugins (which load
+-- everything via vim.pack.add) before lsp which requires them. Debugger and
+-- test runner are set up once Neovim goes idle (not needed at first paint).
+-- ===========================================================================
 
-vim.g.default_colorscheme = "bluloco"
+vim.g.mapleader = " "
+vim.g.maplocalleader = ","
 
-local function load_source(source)
-  local status_ok, error = pcall(require, source)
-  if not status_ok then
-    vim.api.nvim_echo(
-      {{"Failed to load " .. source .. "\n\n" .. error}}, true, {err = true}
-    )
+-- Disable unused built-in runtime plugins (small startup win, no feature loss).
+for _, p in ipairs({
+  "gzip", "tarPlugin", "zipPlugin", "tohtml", "tutor",
+  "netrwPlugin", "rplugin", "spellfile", "matchit",
+}) do
+  vim.g["loaded_" .. p] = 1
+end
+
+vim.loader.enable()
+
+local function load(mod)
+  local ok, err = pcall(require, mod)
+  if not ok then
+    vim.api.nvim_echo({ { "Failed to load " .. mod .. "\n\n" .. err } }, true, { err = true })
   end
 end
 
-local function load_sources(source_files)
-  vim.loader.enable()
-  for _, source in ipairs(source_files) do
-    load_source(source)
-  end
-end
+load("config.options")
+load("config.plugins") -- vim.pack.add + setups (loads every plugin)
+load("config.lsp")     -- mason + native LSP + conform + nvim-lint
+load("config.keymaps")
+load("config.autocmds")
 
-local function load_sources_async(source_files)
-  for _, source in ipairs(source_files) do
-    vim.defer_fn(function()
-      load_source(source)
-    end, 50)
-  end
-end
-
-local function load_colorscheme(colorscheme)
-    if vim.g.default_colorscheme then
-      if not pcall(vim.cmd.colorscheme, colorscheme) then
-        require("base.utils").notify(
-          "Error setting up colorscheme: " .. colorscheme,
-          vim.log.levels.ERROR
-        )
-      end
-    end
-end
-
--- Call the functions defined above.
-load_sources({
-  "base.1-options",
-  "base.2-lazy",
-  "base.3-autocmds", -- critical stuff, don't change the execution order.
-})
-load_colorscheme(vim.g.default_colorscheme)
-load_sources_async({ "base.4-mappings" })
+-- Heavier, on-demand subsystems: set up the instant Neovim goes idle.
+vim.schedule(function()
+  load("config.debug") -- nvim-dap + dap-ui
+  load("config.test")  -- neotest + coverage
+end)
