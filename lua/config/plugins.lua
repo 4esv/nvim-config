@@ -61,9 +61,9 @@ vim.pack.add({
   -- icons, pairs and starter — one plugin replacing ~6.
   { src = gh("nvim-mini/mini.nvim"), version = "stable" },
 
-  -- Treesitter --------------------------------------------------------------
-  { src = gh("nvim-treesitter/nvim-treesitter"), version = "master" },
-  { src = gh("nvim-treesitter/nvim-treesitter-textobjects"), version = "master" },
+  -- Treesitter (main branch — master crashes on Neovim 0.12's query API) ----
+  { src = gh("nvim-treesitter/nvim-treesitter"), version = "main" },
+  { src = gh("nvim-treesitter/nvim-treesitter-textobjects"), version = "main" },
 
   -- LSP / completion / format / lint ---------------------------------------
   gh("neovim/nvim-lspconfig"),
@@ -211,49 +211,46 @@ starter.setup({
   footer = "use what exists · automate what repeats · document what breaks",
 })
 
--- Treesitter ------------------------------------------------------------------
-require("nvim-treesitter.configs").setup({
-  ensure_installed = {
-    "lua", "vim", "vimdoc", "query",
-    "python",
-    "javascript", "typescript", "tsx", "html", "css",
-    "json", "jsonc", "yaml", "toml",
-    "bash",
-    "markdown", "markdown_inline",
-    "diff", "git_config", "gitcommit", "gitignore", "regex",
-  },
-  auto_install = false,
-  highlight = {
-    enable = true,
-    disable = function(_, buf)
-      local big = vim.g.big_file or { size = 1024 * 5000, lines = 50000 }
-      local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-      if ok and stats and stats.size > big.size then return true end
-      return false
-    end,
-  },
-  indent = { enable = true },
-  matchup = { enable = true },
-  textobjects = {
-    select = {
-      enable = true,
-      lookahead = true,
-      keymaps = {
-        ["af"] = "@function.outer",
-        ["if"] = "@function.inner",
-        ["ac"] = "@class.outer",
-        ["ic"] = "@class.inner",
-        ["aa"] = "@parameter.outer",
-        ["ia"] = "@parameter.inner",
-      },
-    },
-    move = {
-      enable = true,
-      goto_next_start = { ["]f"] = "@function.outer", ["]c"] = "@class.outer" },
-      goto_previous_start = { ["[f"] = "@function.outer", ["[c"] = "@class.outer" },
-    },
-  },
+-- Treesitter (main branch) ----------------------------------------------------
+-- Main branch doesn't auto-enable highlighting or take an ensure_installed list:
+-- we install() parsers and start highlighting per-buffer in a FileType autocmd.
+local ts_parsers = {
+  "lua", "vim", "vimdoc", "query",
+  "python", "javascript", "typescript", "tsx", "html", "css",
+  "json", "yaml", "toml", "bash",
+  "markdown", "markdown_inline",
+  "diff", "git_config", "gitcommit", "gitignore", "regex",
+}
+pcall(function() require("nvim-treesitter").install(ts_parsers) end)
+
+vim.api.nvim_create_autocmd("FileType", {
+  desc = "Start treesitter highlighting",
+  callback = function(ev)
+    local big = vim.g.big_file or { size = 1024 * 5000 }
+    local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(ev.buf))
+    if ok and stats and stats.size > big.size then return end
+    pcall(vim.treesitter.start, ev.buf)
+  end,
 })
+
+-- Treesitter textobjects (main-branch API: setup + manual maps) ---------------
+pcall(function()
+  require("nvim-treesitter-textobjects").setup({
+    select = { lookahead = true },
+    move = { set_jumps = true },
+  })
+  local sel = require("nvim-treesitter-textobjects.select").select_textobject
+  local move = require("nvim-treesitter-textobjects.move")
+  for _, t in ipairs({ { "f", "@function" }, { "c", "@class" }, { "a", "@parameter" } }) do
+    local key, q = t[1], t[2]
+    vim.keymap.set({ "x", "o" }, "a" .. key, function() sel(q .. ".outer", "textobjects") end, { desc = "around " .. q })
+    vim.keymap.set({ "x", "o" }, "i" .. key, function() sel(q .. ".inner", "textobjects") end, { desc = "inside " .. q })
+  end
+  vim.keymap.set({ "n", "x", "o" }, "]f", function() move.goto_next_start("@function.outer", "textobjects") end, { desc = "Next function" })
+  vim.keymap.set({ "n", "x", "o" }, "[f", function() move.goto_previous_start("@function.outer", "textobjects") end, { desc = "Prev function" })
+  vim.keymap.set({ "n", "x", "o" }, "]c", function() move.goto_next_start("@class.outer", "textobjects") end, { desc = "Next class" })
+  vim.keymap.set({ "n", "x", "o" }, "[c", function() move.goto_previous_start("@class.outer", "textobjects") end, { desc = "Prev class" })
+end)
 
 -- Completion (blink.cmp) ------------------------------------------------------
 require("blink.cmp").setup({
@@ -308,6 +305,19 @@ require("project_nvim").setup({
   manual_mode = false,
   detection_methods = { "pattern" },
 })
+
+-- Session manager — MUST be synchronous (before VimEnter) so autoload is
+-- Disabled in time. Otherwise it autoloads the last session on startup and
+-- opens the previous file instead of the greeter. Manual load via <leader>S….
+do
+  local ok, sm = pcall(require, "session_manager")
+  if ok then
+    sm.setup({
+      autoload_mode = require("session_manager.config").AutoloadMode.Disabled,
+      autosave_last_session = true,
+    })
+  end
+end
 -- telescope extensions, neoclip, spectre load in the deferred block at the
 -- bottom (not needed for the first paint).
 
@@ -440,14 +450,4 @@ vim.schedule(function()
 
   -- wrapped.nvim — :WrappedNvim for config stats/heatmap (also <leader>pw)
   pcall(function() require("wrapped").setup({ path = vim.fn.stdpath("config") }) end)
-
-  -- Session manager: manual load via <leader>S… only (no surprise autoload,
-  -- which previously restored stale buffers/neo-tree state after a config swap).
-  do
-    local ok, sm = pcall(require, "session_manager")
-    if ok then
-      local Mode = require("session_manager.config").AutoloadMode
-      sm.setup({ autoload_mode = Mode.Disabled, autosave_last_session = true })
-    end
-  end
 end)
