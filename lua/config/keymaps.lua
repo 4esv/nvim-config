@@ -105,6 +105,7 @@ map("n", "<leader>pU", function() vim.pack.update(nil, { force = true }) end, { 
 map("n", "<leader>pm", "<cmd>Mason<cr>", { desc = "Mason open" })
 map("n", "<leader>pM", "<cmd>MasonUpdate<cr>", { desc = "Mason registry update" })
 map("n", "<leader>pT", "<cmd>TSUpdate<cr>", { desc = "Treesitter update" })
+map("n", "<leader>pw", "<cmd>WrappedNvim<cr>", { desc = "Nvim Wrapped (config stats)" })
 
 -- ---------------------------------------------------------------------------
 -- Buffers / tabs (reimplemented on mini.bufremove + native cmds)

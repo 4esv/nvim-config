@@ -116,6 +116,8 @@ vim.pack.add({
   gh("folke/noice.nvim"),
   gh("petertriho/nvim-scrollbar"),
   gh("Eandrju/cellular-automaton.nvim"),
+  gh("nvzone/volt"),         -- UI lib (dep for wrapped.nvim)
+  gh("aikhe/wrapped.nvim"),  -- "year in review" stats for your nvim config
 
   -- Markdown ----------------------------------------------------------------
   gh("MeanderingProgrammer/render-markdown.nvim"),
@@ -171,21 +173,42 @@ require("mini.animate").setup({
 vim.g.minipairs_disable = not vim.g.autopairs_enabled
 require("mini.pairs").setup()
 
--- Greeter (replaces alpha-nvim) ----------------------------------------------
+-- Greeter (mini.starter, replaces alpha-nvim) --------------------------------
 local starter = require("mini.starter")
 starter.setup({
   header = table.concat({
-    "  Neovim 0.12 · vim.pack trial  ",
-    "  (slimmed NormalNvim port)     ",
+    "",
+    " █████╗ ███████╗███████╗██╗   ██╗",
+    "██╔══██╗██╔════╝██╔════╝██║   ██║",
+    "███████║█████╗  ███████╗██║   ██║",
+    "██╔══██║██╔══╝  ╚════██║╚██╗ ██╔╝",
+    "██║  ██║███████╗███████║ ╚████╔╝ ",
+    "╚═╝  ╚═╝╚══════╝╚══════╝  ╚═══╝  ",
+    "",
+    os.date("%A %d %B %Y"),
+    "",
   }, "\n"),
   items = {
-    starter.sections.builtin_actions(),
-    starter.sections.recent_files(5, true),
+    starter.sections.recent_files(6, false), -- recent in cwd
+    {
+      { name = "Find file", action = "Telescope find_files", section = "Actions" },
+      { name = "Find word", action = "Telescope live_grep", section = "Actions" },
+      { name = "New file", action = "enew", section = "Actions" },
+      {
+        name = "Config",
+        action = "lua require('telescope.builtin').find_files({cwd=vim.fn.stdpath('config'),follow=true})",
+        section = "Actions",
+      },
+      { name = "Sessions", action = "SessionManager! load_session", section = "Actions" },
+      { name = "Update plugins", action = "PackUpdate", section = "Actions" },
+      { name = "Quit", action = "qa", section = "Actions" },
+    },
   },
   content_hooks = {
     starter.gen_hook.adding_bullet(),
     starter.gen_hook.aligning("center", "center"),
   },
+  footer = "use what exists · automate what repeats · document what breaks",
 })
 
 -- Treesitter ------------------------------------------------------------------
@@ -277,8 +300,16 @@ telescope.setup({
     fzf = { fuzzy = true, override_generic_sorter = true, override_file_sorter = true },
   },
 })
--- telescope extensions, neoclip, project, spectre are loaded in the deferred
--- block at the bottom (they aren't needed for the first paint).
+-- project.nvim must be set up synchronously: its autocmd has to be registered
+-- before the startup file's BufEnter so it can set cwd to the project root.
+-- pattern-only detection: finds the git/Makefile/etc. root, and avoids the
+-- "lsp" method's deprecated vim.lsp.buf_get_clients() call (0.12 warning).
+require("project_nvim").setup({
+  manual_mode = false,
+  detection_methods = { "pattern" },
+})
+-- telescope extensions, neoclip, spectre load in the deferred block at the
+-- bottom (not needed for the first paint).
 
 -- Git -------------------------------------------------------------------------
 require("gitsigns").setup({
@@ -391,7 +422,6 @@ vim.schedule(function()
   pcall(telescope.load_extension, "undo")
   pcall(telescope.load_extension, "neoclip")
   require("neoclip").setup()
-  require("project_nvim").setup({ manual_mode = false })
   pcall(telescope.load_extension, "projects")
   require("spectre").setup()
 
@@ -407,6 +437,9 @@ vim.schedule(function()
   -- Scrollbar (+ gitsigns integration)
   require("scrollbar").setup({ excluded_filetypes = { "neo-tree", "alpha", "starter" } })
   pcall(function() require("scrollbar.handlers.gitsigns").setup() end)
+
+  -- wrapped.nvim — :WrappedNvim for config stats/heatmap (also <leader>pw)
+  pcall(function() require("wrapped").setup({ path = vim.fn.stdpath("config") }) end)
 
   -- Session manager: manual load via <leader>S… only (no surprise autoload,
   -- which previously restored stale buffers/neo-tree state after a config swap).

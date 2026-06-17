@@ -48,7 +48,8 @@ vim.opt.wrap = true
 vim.opt.colorcolumn = "80" -- PEP8 like character limit vertical bar.
 vim.opt.mousescroll = "ver:1,hor:0" -- Disables horizontal scroll in neovim.
 vim.opt.guicursor = "n:blinkon200,i-ci-ve:ver25" -- Enable cursor blink.
-vim.opt.autochdir = true -- Use current file dir as working dir.
+vim.opt.autochdir = false -- project.nvim sets cwd to the project ROOT (autochdir
+                          -- fights it and cds to each file's deep dir — don't).
 vim.opt.scrolloff = 1000 -- Keep the cursor centered.
 vim.opt.sidescrolloff = 8
 vim.opt.selection = "old" -- Don't select the newline symbol when using <End> on visual mode.
