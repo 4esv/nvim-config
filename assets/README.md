@@ -13,7 +13,7 @@ third-party packages — a supply-chain guard).
 ```sh
 npm install -g @amansingh-afk/milli
 cd ~/.config/nvim
-milli export assets/sysyphus.gif /tmp/sysyphus-out -t lua -w 60 --no-bg
+milli export assets/sysyphus.gif /tmp/sysyphus-out -t lua -w 90 --mode braille --no-bg
 cp /tmp/sysyphus-out/frames.lua lua/milli/splashes/sysyphus.lua
 ```
 
