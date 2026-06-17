@@ -1,7 +1,7 @@
 -- Options ported from your NormalNvim 1-options.lua (verbatim where it still applies).
 
--- Theme (eldritch = colorful; "mono" is monochrome-by-design — swap live with <leader>ft)
-vim.g.default_colorscheme = "eldritch"
+-- Theme (posterpole active; eldritch + mono also bundled — swap live with <leader>ft)
+vim.g.default_colorscheme = "posterpole"
 
 -- Options --------------------------------------------------------------------
 vim.opt.breakindent = true -- Wrap indent to match line start.

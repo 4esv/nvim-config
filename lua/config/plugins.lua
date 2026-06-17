@@ -137,9 +137,12 @@ vim.pack.add({
   gh("mlochbaum/BQN"),
   gh("calebowens/nvim-bqn"),
 
-  -- Colorschemes (active: mono; eldritch kept as an alternative) ------------
+  -- Colorschemes (active: posterpole; cycle/preview them all with <leader>ft) -
   gh("psynyde/mono"),
   gh("eldritch-theme/eldritch.nvim"),
+  gh("ilof2/posterpole.nvim"),
+  gh("yorumicolors/yorumi.nvim"),
+  gh("rileytwo/kiss"),
 })
 
 -- ===========================================================================
@@ -367,6 +370,7 @@ wk.add({
 })
 
 -- Colorscheme (synchronous — needed for the first paint) ----------------------
+pcall(function() require("posterpole").setup({}) end)
 if not pcall(vim.cmd.colorscheme, vim.g.default_colorscheme) then
   vim.notify("Could not load colorscheme: " .. tostring(vim.g.default_colorscheme), vim.log.levels.WARN)
 end
