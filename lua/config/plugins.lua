@@ -118,6 +118,7 @@ vim.pack.add({
   gh("Eandrju/cellular-automaton.nvim"),
   gh("nvzone/volt"),         -- UI lib (dep for wrapped.nvim)
   gh("aikhe/wrapped.nvim"),  -- "year in review" stats for your nvim config
+  gh("Amansingh-afk/milli.nvim"), -- animated ASCII splash in mini.starter
 
   -- Markdown ----------------------------------------------------------------
   gh("MeanderingProgrammer/render-markdown.nvim"),
@@ -175,19 +176,36 @@ require("mini.pairs").setup()
 
 -- Greeter (mini.starter, replaces alpha-nvim) --------------------------------
 local starter = require("mini.starter")
+
+-- Header: animated sysyphus splash via milli.nvim once the gif is converted to
+-- frames (lua/milli/splashes/sysyphus.lua — see assets/README.md). Until then,
+-- fall back to the AESV banner. milli.starter() animates the splash in place,
+-- anchoring on its first frame, which we seed as the header.
+local header = table.concat({
+  "",
+  " █████╗ ███████╗███████╗██╗   ██╗",
+  "██╔══██╗██╔════╝██╔════╝██║   ██║",
+  "███████║█████╗  ███████╗██║   ██║",
+  "██╔══██║██╔══╝  ╚════██║╚██╗ ██╔╝",
+  "██║  ██║███████╗███████║ ╚████╔╝ ",
+  "╚═╝  ╚═╝╚══════╝╚══════╝  ╚═══╝  ",
+  "",
+  os.date("%A %d %B %Y"),
+  "",
+}, "\n")
+do
+  local ok, milli = pcall(require, "milli")
+  if ok then
+    local loaded, data = pcall(milli.load, { splash = "sysyphus" })
+    if loaded and data and data.frames and data.frames[1] then
+      header = table.concat(data.frames[1], "\n")
+      milli.starter({ splash = "sysyphus", loop = true })
+    end
+  end
+end
+
 starter.setup({
-  header = table.concat({
-    "",
-    " █████╗ ███████╗███████╗██╗   ██╗",
-    "██╔══██╗██╔════╝██╔════╝██║   ██║",
-    "███████║█████╗  ███████╗██║   ██║",
-    "██╔══██║██╔══╝  ╚════██║╚██╗ ██╔╝",
-    "██║  ██║███████╗███████║ ╚████╔╝ ",
-    "╚═╝  ╚═╝╚══════╝╚══════╝  ╚═══╝  ",
-    "",
-    os.date("%A %d %B %Y"),
-    "",
-  }, "\n"),
+  header = header,
   items = {
     starter.sections.recent_files(6, false), -- recent in cwd
     {
